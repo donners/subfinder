@@ -27,10 +27,12 @@ func (a *Agent) EnumerateSubdomains(domain string, keys subscraping.Keys, timeou
 			wg.Add(1)
 
 			go func(source string, runner subscraping.Source) {
+				start := time.Now()
 				for resp := range runner.Run(ctx, domain, session) {
 					results <- resp
 				}
 				wg.Done()
+				fmt.Printf("subfinder.EnumerateSubdomains - source %s finished scanning %s after %s\n", source, domain, time.Since(start))
 			}(source, runner)
 		}
 		wg.Wait()
